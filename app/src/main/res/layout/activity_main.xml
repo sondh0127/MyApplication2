@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/bgr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rl_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/dis"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#ff0000"></View>
+
+            <View
+                android:id="@+id/ena"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="#00ff00"></View>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="162dp"
+                android:layout_height="77dp"
+                android:text="TextView"
+                tools:text="dfasdasd" />
+
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/videoFullScreenPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#A6000000"
+                app:controller_layout_id="@layout/exo_playback_control_view"
+                app:player_layout_id="@layout/exo_simple_player_view"
+                app:repeat_toggle_modes="none"
+                app:show_timeout="45000"
+                app:surface_type="texture_view">
+
+            </com.google.android.exoplayer2.ui.PlayerView>
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/web_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+        </FrameLayout>
+    </FrameLayout>
+</LinearLayout>
