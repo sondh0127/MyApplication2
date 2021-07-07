@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -14,10 +15,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private void startPlayingVideo(Context ctx, String CONTENT_URL, int playerID, String appNameRes) {
 
         pvMain = findViewById(playerID);
+
 
 
         TrackSelector trackSelectorDef = new DefaultTrackSelector();
@@ -113,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         WebView webview = findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_test.html");
+        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_test2.html");
         webview.setBackgroundColor(Color.TRANSPARENT);
         View webParent = findViewById(R.id.web_parent);
         webview.setVisibility(View.VISIBLE);
+        webview.setFocusableInTouchMode(false);
         findViewById(R.id.ena).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,30 +152,30 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 MotionEvent motionEvent = MotionEvent.obtain(event);
                 System.out.println(getIsShow());
-                //these 3 lines is for bug when target and source has different on screen positions
-                int[] posTemp1 = new int[2];
-                int[] posTemp2 = new int[2];
-                webview.getLocationOnScreen(posTemp1);
-                pvMain.getLocationOnScreen(posTemp2);
-                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
-                System.out.println(posTemp1[0]-posTemp2[0]);
-                System.out.println(posTemp1[1]-posTemp2[1]);
-
+//                WebView.HitTestResult hr = ((WebView)v).getHitTestResult();
+//                Log.d("WebView","getExtra = "+ hr.getExtra() + "\t\t Type=" + hr.getType());
+//                int[] posTemp1 = new int[2];
+//                int[] posTemp2 = new int[2];
+//                webview.getLocationOnScreen(posTemp1);
+//                pvMain.getLocationOnScreen(posTemp2);
+//                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
+//                System.out.println(posTemp1[0]-posTemp2[0]);
+//                System.out.println(posTemp1[1]-posTemp2[1]);
                 if (!getIsShow()) {
                     mainLayout.dispatchTouchEvent(motionEvent);
                 }
+
                 switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
                     case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_DOWN:
                     case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_POINTER_DOWN:
-                    case MotionEvent.ACTION_POINTER_UP:
+
                         setIsShow(false);
                         break;
                 }
 
 
-                return false; //true if we want sourceView to not handle it
+                return getIsShow(); //true if we want sourceView to not handle it
             }
         });
 
