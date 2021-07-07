@@ -19,6 +19,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     PlayerView pvMain;
 
     boolean isShow = false;
+
     private void startPlayingVideo(Context ctx, String CONTENT_URL, int playerID, String appNameRes) {
 
         pvMain = findViewById(playerID);
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void on(){
+        public void on() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -82,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
         @JavascriptInterface
-        public void off(){
+        public void off() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -91,26 +94,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
         @JavascriptInterface
-        public void setIsShowTrue(){
+        public void setIsShowTrue() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     setIsShow(true);
+                }
+            });
 
-                }
-            });
-        }
-        @JavascriptInterface
-        public void setIsShowFalse(){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setIsShow(false);
-                }
-            });
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 webParent.setVisibility(View.VISIBLE);
-                System.out.println("enable");
 //                webParent.setEnabled(true);
             }
         });
@@ -133,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 webParent.setVisibility(View.INVISIBLE);
-                System.out.println("disable");
 //                webParent.setEnabled(false);
             }
         });
@@ -147,16 +141,32 @@ public class MainActivity extends AppCompatActivity {
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
         webview.addJavascriptInterface(jsInterface, "parentApp");
         webview.setOnTouchListener(new View.OnTouchListener() {
+            RelativeLayout mainLayout = findViewById(R.id.rl_video);
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 MotionEvent motionEvent = MotionEvent.obtain(event);
                 System.out.println(getIsShow());
                 //these 3 lines is for bug when target and source has different on screen positions
-//                webview.getLocationOnScreen(posTemp1);
-//                targetView.getLocationOnScreen(posTemp2);
-//                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
+                int[] posTemp1 = new int[2];
+                int[] posTemp2 = new int[2];
+                webview.getLocationOnScreen(posTemp1);
+                pvMain.getLocationOnScreen(posTemp2);
+                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
+                System.out.println(posTemp1[0]-posTemp2[0]);
+                System.out.println(posTemp1[1]-posTemp2[1]);
+
                 if (!getIsShow()) {
-                    pvMain.dispatchTouchEvent(motionEvent);
+                    mainLayout.dispatchTouchEvent(motionEvent);
+                }
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                    case MotionEvent.ACTION_POINTER_UP:
+                        setIsShow(false);
+                        break;
                 }
 
 
