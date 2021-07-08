@@ -27,7 +27,7 @@
                 app:player_layout_id="@layout/exo_simple_player_view"
                 app:repeat_toggle_modes="none"
                 app:show_timeout="45000"
-                app:surface_type="texture_view"/>
+                app:surface_type="texture_view" />
 
             <View
                 android:id="@+id/ena"
@@ -51,19 +51,26 @@
                 android:inputType="textPersonName"
                 android:text="Name" />
 
-        </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/web_parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible">
-
-            <WebView
-                android:id="@+id/webview"
+            <com.example.myapplication.MyWebViewContainer
+                android:id="@+id/web_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible" />
-        </FrameLayout>
+                android:visibility="visible">
+
+                <com.example.myapplication.MyWebView
+                    android:id="@+id/webview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible" />
+<!--                <WebView-->
+<!--                    android:id="@+id/webview"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:visibility="visible" />-->
+
+            </com.example.myapplication.MyWebViewContainer>
+
+        </RelativeLayout>
+
     </FrameLayout>
 </LinearLayout>

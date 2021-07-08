@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     PlayerView pvMain;
 
     boolean isShow = false;
-
+    MyWebView webview;
+    MyWebViewContainer webParent;
     private void startPlayingVideo(Context ctx, String CONTENT_URL, int playerID, String appNameRes) {
 
         pvMain = findViewById(playerID);
@@ -100,11 +103,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void setIsShowTrue() {
+        public void setWebViewPrevent() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setIsShow(true);
+                    Log.d("WebView", "setWebViewPrevent");
+                    webParent.setPreventTouch(false);
+                }
+            });
+
+        }
+
+        @JavascriptInterface
+        public void setWebViewPreventTrue() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("WebView", "setWebViewPrevent");
+                    webParent.setPreventTouch(true);
                 }
             });
 
@@ -115,11 +131,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        WebView webview = findViewById(R.id.webview);
+        webview = (MyWebView) findViewById(R.id.webview);
+
+        RelativeLayout mainLayout = findViewById(R.id.rl_video);
+        webview.setConfig(mainLayout);
+
+//        WebView webview = findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_test2.html");
+        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_test.html");
         webview.setBackgroundColor(Color.TRANSPARENT);
-        View webParent = findViewById(R.id.web_parent);
+        webParent = (MyWebViewContainer) findViewById(R.id.web_parent);
         webview.setVisibility(View.VISIBLE);
         webview.setFocusableInTouchMode(false);
         findViewById(R.id.ena).setOnClickListener(new View.OnClickListener() {
@@ -145,37 +166,43 @@ public class MainActivity extends AppCompatActivity {
         });
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
         webview.addJavascriptInterface(jsInterface, "parentApp");
-        webview.setOnTouchListener(new View.OnTouchListener() {
-            RelativeLayout mainLayout = findViewById(R.id.rl_video);
+        webParent.requestDisallowInterceptTouchEvent(true);
 
+        webview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 MotionEvent motionEvent = MotionEvent.obtain(event);
-                System.out.println(getIsShow());
-//                WebView.HitTestResult hr = ((WebView)v).getHitTestResult();
-//                Log.d("WebView","getExtra = "+ hr.getExtra() + "\t\t Type=" + hr.getType());
-//                int[] posTemp1 = new int[2];
-//                int[] posTemp2 = new int[2];
-//                webview.getLocationOnScreen(posTemp1);
-//                pvMain.getLocationOnScreen(posTemp2);
-//                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
-//                System.out.println(posTemp1[0]-posTemp2[0]);
-//                System.out.println(posTemp1[1]-posTemp2[1]);
-                if (!getIsShow()) {
-                    mainLayout.dispatchTouchEvent(motionEvent);
-                }
+                int[] posTemp1 = new int[2];
+                int[] posTemp2 = new int[2];
+                webview.getLocationOnScreen(posTemp1);
+                pvMain.getLocationOnScreen(posTemp2);
+                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_DOWN:
-                    case MotionEvent.ACTION_CANCEL:
-
-                        setIsShow(false);
-                        break;
-                }
+//                if (motionEvent.getSource() == 4098) {
+//                    webview.requestDisallowInterceptTouchEvent(false);
+//                }
 
 
-                return getIsShow(); //true if we want sourceView to not handle it
+//                Log.d("WebView", "onTouch_isPrevent" + webview._isPrevent);
+
+//                if (webview._isPrevent) {
+//                    mainLayout.dispatchTouchEvent(motionEvent);
+//                }
+//
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        setIsShow(false);
+//                        break;
+//                    case MotionEvent.ACTION_CANCEL:
+//                    case MotionEvent.ACTION_UP:
+//                        setIsShow(false);
+//                        break;
+//                    default:
+//                        break;
+//                }
+
+
+                return false;
             }
         });
 
