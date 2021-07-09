@@ -103,27 +103,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void setWebViewPrevent() {
+        public void setPreventTouchFalse() {
+            webview.setPreventTouch(false);
+            Log.d("WebView", "setPreventTouchFalse ");
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("WebView", "setWebViewPrevent");
-                    webParent.setPreventTouch(false);
                 }
             });
-
         }
 
         @JavascriptInterface
-        public void setWebViewPreventTrue() {
+        public void setPreventTouchTrue() {
+//            webview.setPreventTouch(true);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("WebView", "setWebViewPrevent");
-                    webParent.setPreventTouch(true);
                 }
             });
-
         }
     }
 
@@ -132,15 +130,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         webview = (MyWebView) findViewById(R.id.webview);
-
+        FrameLayout webParent = findViewById(R.id.web_parent);
         RelativeLayout mainLayout = findViewById(R.id.rl_video);
-        webview.setConfig(mainLayout);
+        webview.setConfig(mainLayout, webParent);
 
 //        WebView webview = findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_test.html");
+        webview.loadUrl("https://dev-livestream.gviet.vn/ilp-statics/android-interactive_dev.html");
         webview.setBackgroundColor(Color.TRANSPARENT);
-        webParent = (MyWebViewContainer) findViewById(R.id.web_parent);
         webview.setVisibility(View.VISIBLE);
         webview.setFocusableInTouchMode(false);
         findViewById(R.id.ena).setOnClickListener(new View.OnClickListener() {
@@ -166,45 +163,20 @@ public class MainActivity extends AppCompatActivity {
         });
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
         webview.addJavascriptInterface(jsInterface, "parentApp");
-        webParent.requestDisallowInterceptTouchEvent(true);
 
-        webview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                MotionEvent motionEvent = MotionEvent.obtain(event);
-                int[] posTemp1 = new int[2];
-                int[] posTemp2 = new int[2];
-                webview.getLocationOnScreen(posTemp1);
-                pvMain.getLocationOnScreen(posTemp2);
-                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
-
-//                if (motionEvent.getSource() == 4098) {
-//                    webview.requestDisallowInterceptTouchEvent(false);
-//                }
-
-
-//                Log.d("WebView", "onTouch_isPrevent" + webview._isPrevent);
-
-//                if (webview._isPrevent) {
-//                    mainLayout.dispatchTouchEvent(motionEvent);
-//                }
+//        webview.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                MotionEvent motionEvent = MotionEvent.obtain(event);
+//                int[] posTemp1 = new int[2];
+//                int[] posTemp2 = new int[2];
+//                webview.getLocationOnScreen(posTemp1);
+//                pvMain.getLocationOnScreen(posTemp2);
+//                motionEvent.offsetLocation(posTemp1[0]-posTemp2[0], posTemp1[1]-posTemp2[1]);
 //
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        setIsShow(false);
-//                        break;
-//                    case MotionEvent.ACTION_CANCEL:
-//                    case MotionEvent.ACTION_UP:
-//                        setIsShow(false);
-//                        break;
-//                    default:
-//                        break;
-//                }
-
-
-                return false;
-            }
-        });
+//                return false;
+//            }
+//        });
 
         String CONTENT_URL = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4";
         int playerID = R.id.videoFullScreenPlayer;
